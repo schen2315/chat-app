@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.text.format.DateFormat;
 
@@ -26,11 +28,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static int SIGN_IN_REQUEST_CODE = 1;
-    private FirebaseListAdapter<ChatMessage> adapter;
+    //private FirebaseListAdapter<ChatMessage> adapter;
+    ArrayAdapter<String> itemsAdapter;
+    private ArrayList<String> messages;
+    ListView listOfMessage;
+    Catergories cat;
     RelativeLayout activity_main;
 
     //Add Emojicon
@@ -83,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         activity_main = (RelativeLayout)findViewById(R.id.activity_main);
+        messages = new ArrayList<String>();
+        cat = new Catergories();
 
         //Add Emoji
         emojiButton = (ImageView)findViewById(R.id.emoji_button);
@@ -94,14 +104,24 @@ public class MainActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference().push().setValue(new ChatMessage(emojiconEditText.getText().toString(),
-                        FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                /*FirebaseDatabase.getInstance().getReference().push().setValue(new ChatMessage(emojiconEditText.getText().toString(),
+                        FirebaseAuth.getInstance().getCurrentUser().getEmail()));*/
+                String input = emojiconEditText.getText().toString();
+                messages.add(input);
                 emojiconEditText.setText("");
                 emojiconEditText.requestFocus();
+                itemsAdapter.notifyDataSetChanged();
+                listOfMessage.setSelection(itemsAdapter.getCount()-1);
+
+                String res = cat.getResponse(input);
+                messages.add(res);
+                itemsAdapter.notifyDataSetChanged();
+                listOfMessage.setSelection(itemsAdapter.getCount()-1);
             }
         });
 
         //Check if not sign-in then navigate Signin page
+        /*
         if(FirebaseAuth.getInstance().getCurrentUser() == null)
         {
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(),SIGN_IN_REQUEST_CODE);
@@ -112,15 +132,18 @@ public class MainActivity extends AppCompatActivity {
             //Load content
             displayChatMessage();
         }
-
-
+        */
+        displayChatMessage();
     }
 
 
 
     private void displayChatMessage() {
 
-        ListView listOfMessage = (ListView)findViewById(R.id.list_of_message);
+        listOfMessage = (ListView)findViewById(R.id.list_of_message);
+        itemsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, android.R.id.text1, messages);
+        listOfMessage.setAdapter(itemsAdapter);
+        /*
         adapter = new FirebaseListAdapter<ChatMessage>(this,ChatMessage.class,R.layout.list_item,FirebaseDatabase.getInstance().getReference())
         {
             @Override
@@ -139,5 +162,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         listOfMessage.setAdapter(adapter);
+        */
+
     }
 }
