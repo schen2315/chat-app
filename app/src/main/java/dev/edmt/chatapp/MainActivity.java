@@ -1,6 +1,7 @@
 package dev.edmt.chatapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,12 +19,20 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.text.format.DateFormat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONObject;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -37,9 +46,20 @@ public class MainActivity extends AppCompatActivity {
     //private FirebaseListAdapter<ChatMessage> adapter;
     ArrayAdapter<String> itemsAdapter;
     private ArrayList<String> messages;
+    private String credentials = "9bed217f0bc146c897f164f5f61acf00";
     ListView listOfMessage;
     Catergories cat;
     RelativeLayout activity_main;
+
+    String [] phrases = {   "Check my finances.",
+            "I bought a thing.",
+            "Create a budget.",
+    };
+    String [] responses = {
+            "Check your finances?",
+            "Input spending amount?",
+            "Start a budget?"
+    };
 
     //Add Emojicon
     EmojiconEditText emojiconEditText;
@@ -112,11 +132,44 @@ public class MainActivity extends AppCompatActivity {
                 emojiconEditText.requestFocus();
                 itemsAdapter.notifyDataSetChanged();
                 listOfMessage.setSelection(itemsAdapter.getCount()-1);
+                //final ArrayList<JSONObject> similarities = new ArrayList<JSONObject>();
+                //String url= "https://api.dandelion.eu/datatxt/sim/v1/?text1=Cameron%20wins%20the%20Oscar &text2=All%20nominees%20for%20the%20Academy%20Awards&token=" + credentials;
+                //String url = "https://my-json-feed";
+                //String url = "https://jsonplaceholder.typicode.com/posts/1"
+                /*
+                for(int i=0; i < phrases.length ; i++) {
+                    Uri.Builder builder = new Uri.Builder();
+                    builder.scheme("https")
+                            .authority("api.dandelion.eu")
+                            .appendPath("datatxt").appendPath("sim").appendPath("v1")
+                            .appendQueryParameter("text1", input)
+                            .appendQueryParameter("text2", phrases[i])
+                            .appendQueryParameter("token", credentials);
+                    String myUrl = builder.build().toString();
+                    JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                            (Request.Method.GET, myUrl, (String) null, new Response.Listener<JSONObject>() {
 
-                String res = cat.getResponse(input);
-                messages.add(res);
-                itemsAdapter.notifyDataSetChanged();
-                listOfMessage.setSelection(itemsAdapter.getCount()-1);
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    //mTxtDisplay.setText("Response: " + response.toString());
+                                    //messages.add(response.toString());
+                                    //itemsAdapter.notifyDataSetChanged();
+                                    //listOfMessage.setSelection(itemsAdapter.getCount()-1);
+
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // TODO Auto-generated method stub
+
+                                }
+                            });
+                    Volley.newRequestQueue(getApplicationContext().getApplicationContext()).add(jsObjRequest);
+                }
+                */
+//                String res = cat.getResponse(input);
+//                messages.add(res);
             }
         });
 

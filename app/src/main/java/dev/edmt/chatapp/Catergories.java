@@ -1,5 +1,8 @@
 package dev.edmt.chatapp;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 /**
  * Created by song on 2/11/18.
  */
@@ -20,7 +23,6 @@ public class Catergories {
     String getResponse(String message) {
         //RequestQueue queue = Volley.newRequestQueue(this);
         String url ="http://www.google.com";
-
         return "HELLO WORLD";
     };
 }
